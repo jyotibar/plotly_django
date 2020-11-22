@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Plotly Test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
+  
+  </head>
+  <body>
+
+  <div>
+                {% autoescape off %}
+                {{ plot_div }}
+                {% endautoescape %}
+                
+                
+    <button id='update-chart' > Update the chart</button>
+    <div id="tester" style="height:350px"></div>
+    <div id="scatter" style="height:350px"></div>
+    <div id="table" style="height:350px"></div>
+
+  </div>
+
+  </body>
+  <script>
+      function make_chart(){
+
+                                var endpoint = '/plotlyPlot/api/data/'
+
+                                var getData = $.get(endpoint)
+                                getData.done( function(result){
+
+                                TESTER = document.getElementById('tester');
+                                
+                                var trace1 = {
+                                x: ['giraffes', 'orangutans', 'monkeys'],
+                                y: result.y_one,
+                                name: 'SF Zoo',
+                                type: 'bar'
+                                };
+
+                                var trace2 = {
+                                x: ['giraffes', 'orangutans', 'monkeys'],
+                                y: result.y_two,
+                                name: 'LA Zoo',
+                                type: 'bar'
+                                };
+
+                                
+
+                                var data = [trace1, trace2];
+
+                                var layout = {barmode: 'group'};
+
+                                Plotly.newPlot(TESTER, data, layout);
+                                    } );
+                            }
+
+        function makeScatterPlot(){
+
+                                var endpoint = '/plotlyPlot/api/data/'
+
+                                var getData = $.get(endpoint)
+                                getData.done( function(result){
+
+                                TESTER = document.getElementById('scatter');
+
+                                var scatter = {
+                                            x: result.y_one,
+                                            y: result.y_two,
+                                            mode: 'markers',
+                                            type: 'scatter'
+                                            };
+                                var data = [scatter];
+
+
+                                Plotly.newPlot(TESTER, data);
+        });}
+
+
+
+
+        function makeTable(){
+
+                                    var endpoint = '/plotlyPlot/api/data/'
+
+                                    var getData = $.get(endpoint)
+                                    getData.done( function(result){
+
+                                    TESTER = document.getElementById('table');
+                                    var values = [result.y_one,result.y_two]
+                                    var data = [{
+                                                type: 'table',
+                                                header: {
+                                                    values: [["<b>Y_one</b>"], ["<b>Y_twp</b>"],
+                                                                ],
+                                                                align: "center",
+                                                line: {width: 1, color: 'black'},
+                                                fill: {color: "grey"},
+                                                font: {family: "Arial", size: 12, color: "white"}
+                                            },
+                                            cells: {
+                                                values: values,
+                                                align: "center",
+                                                line: {color: "black", width: 1},
+                                                font: {family: "Arial", size: 11, color: ["black"]}
+                                            }
+                                            }]
+
+                                    
+
+
+                                    Plotly.newPlot(TESTER, data);
+                                });}
+                                    
+
+    $('#update-chart').on('click', make_chart)
+    $('#update-chart').on('click', makeScatterPlot)
+    $('#update-chart').on('click', makeTable)
+/* 
+    #
+        $.ajax({
+
+            method:'GET',
+            url:endpoint,
+            success: function(data){
+                console.log(data)
+            },
+            error: function(error_data){
+                console.log(error_data)
+            }
+        }) */
+</script> 
+</html>
